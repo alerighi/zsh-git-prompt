@@ -1,19 +1,5 @@
-# To install source this file from your .zshrc file
-
-# see documentation at http://linux.die.net/man/1/zshexpn
-preexec_update_git_vars() {
-    case "$2" in
-    git*|hub*|gh*|stg*)
-        __EXECUTED_GIT_COMMAND=1
-        ;;
-    esac
-}
-
 precmd_update_git_vars() {
-    if [ -n "$__EXECUTED_GIT_COMMAND" ] || [ ! -n "$ZSH_THEME_GIT_PROMPT_CACHE" ]; then
-        update_current_git_vars
-        unset __EXECUTED_GIT_COMMAND
-    fi
+    update_current_git_vars
 }
 
 chpwd_update_git_vars() {
@@ -23,14 +9,8 @@ chpwd_update_git_vars() {
 update_current_git_vars() {
     unset __CURRENT_GIT_STATUS
 
-    if [ "$GIT_PROMPT_EXECUTABLE" = "python" ]; then
-        local py_bin=${ZSH_GIT_PROMPT_PYBIN:-"python"}
-        __GIT_CMD=$(git status --porcelain --branch &> /dev/null 2>&1 | ZSH_THEME_GIT_PROMPT_HASH_PREFIX=$ZSH_THEME_GIT_PROMPT_HASH_PREFIX $py_bin "$__GIT_PROMPT_DIR/gitstatus.py")
-    else
-        __GIT_CMD=$(git status --porcelain --branch &> /dev/null | $__GIT_PROMPT_DIR/src/.bin/gitstatus)
-    fi
+    local __GIT_CMD=$(git status --porcelain --branch &> /dev/null | $__GIT_PROMPT_DIR/gitstatus 2>/dev/null)
     __CURRENT_GIT_STATUS=("${(@s: :)__GIT_CMD}")
-    unset __GIT_CMD
 
     GIT_BRANCH=$__CURRENT_GIT_STATUS[1]
     GIT_AHEAD=$__CURRENT_GIT_STATUS[2]
@@ -115,6 +95,11 @@ git_super_status() {
 export __GIT_PROMPT_DIR=${0:A:h}
 export GIT_PROMPT_EXECUTABLE=${GIT_PROMPT_EXECUTABLE:-"python"}
 
+# compile the program if needed
+if ! [ -x "$__GIT_PROMPT_DIR/gitstatus" ]; then
+    (cd "$__GIT_PROMPT_DIR" && make)
+fi
+
 # Load required modules
 autoload -U add-zsh-hook
 autoload -U colors
@@ -125,7 +110,6 @@ setopt PROMPT_SUBST
 
 # Hooks to make the prompt
 add-zsh-hook chpwd chpwd_update_git_vars
-add-zsh-hook preexec preexec_update_git_vars
 add-zsh-hook precmd precmd_update_git_vars
 
 # Default values for the appearance of the prompt.
