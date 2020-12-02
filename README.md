@@ -1,38 +1,35 @@
 # Informative git prompt for zsh
 
-[![Build Status](https://travis-ci.org/starcraftman/zsh-git-prompt.svg?branch=master)](https://travis-ci.org/starcraftman/zsh-git-prompt)
-
 A `zsh` prompt that displays information about the current git repository. In particular the branch name, difference with remote branch, number of files staged, changed, etc.
 
 (an original idea from this [blog post][]).
 
-## Active Fork
+## Fork
 
-This is an active fork of olivierverdier/zsh-git-prompt
-
-The original maintainer is inactive, I aim to maintain and extend the original with new features.
-
-I do not write Haskell, so I can only ensure the `zshrc.sh` and python version are working. Please contribute PRs for Haskell parity. See issue #5 .
-
-A summary of all changes can be found at [Fork Status](https://github.com/starcraftman/zsh-git-prompt/wiki)
+- implemented `gitstatus` in C
+- it will compile if the binary doesn't exist when you source the script
+- passes all the python tests
+- 10 times faster than python implementation
+- cache no longer needed
+- deleted Haskell implementation
+- deleted python implementation and most python support files
+- add Makefile to compile and run tests
 
 ## Examples
 
 The prompt may look like the following:
 
--   `(master↑3|✚1)`: on branch `master`, ahead of remote by 3 commits, 1 file changed but not staged
--   `(status|●2)`: on branch `status`, 2 files staged
--   `(master|✚7…)`: on branch `master`, 7 files changed, some files untracked
--   `(master|✖2✚3)`: on branch `master`, 2 conflicts, 3 files changed
--   `(experimental↓2↑3|✔)`: on branch `experimental`; your branch has diverged by 3 commits, remote by 2 commits; the repository is otherwise clean
--   `(:70c2952|✔)`: not on any branch; parent commit has hash `70c2952`;
-    the repository is otherwise clean
+- `(master↑3|✚1)`: on branch `master`, ahead of remote by 3 commits, 1 file changed but not staged
+- `(status|●2)`: on branch `status`, 2 files staged
+- `(master|✚7…)`: on branch `master`, 7 files changed, some files untracked
+- `(master|✖2✚3)`: on branch `master`, 2 conflicts, 3 files changed
+- `(experimental↓2↑3|✔)`: on branch `experimental`; your branch has diverged by 3 commits, remote by 2 commits; the repository is otherwise clean
+- `(:70c2952|✔)`: not on any branch; parent commit has hash `70c2952`;
+  the repository is otherwise clean
 
 Here is how it could look like when you are ahead by 4 commits, behind by 5 commits, and have 1 staged files, 1 changed but unstaged file, and some untracked files, on branch `dev`:
 
-
 <img src="https://github.com/olivierverdier/zsh-git-prompt/raw/master/screenshot.png" width=300/>
-
 
 ## Prompt Structure
 
@@ -46,29 +43,28 @@ The symbols are as follows:
 
 ### Local Status Symbols
 
-Symbol | Meaning
------- | -------
-✔      | repository clean
-●n     | there are `n` staged files
-✖n     | there are `n` unmerged files
-✚n     | there are `n` changed but *unstaged* files
-…n     | there are `n` untracked files
-⚑n     | there are `n` stashes on the repo
+| Symbol | Meaning                                    |
+| ------ | ------------------------------------------ |
+| ✔      | repository clean                           |
+| ●n     | there are `n` staged files                 |
+| ✖n     | there are `n` unmerged files               |
+| ✚n     | there are `n` changed but _unstaged_ files |
+| …n     | there are `n` untracked files              |
+| ⚑n     | there are `n` stashes on the repo          |
 
 ### Branch Tracking Symbols
 
-Symbol  | Meaning
-------- | -------
-↑·n     | ahead of remote by `n` commits
-↓·n     | behind remote by `n` commits
-↓·m↑·n  | branches diverged, other by `m` commits, yours by `n` commits
-
+| Symbol | Meaning                                                       |
+| ------ | ------------------------------------------------------------- |
+| ↑·n    | ahead of remote by `n` commits                                |
+| ↓·n    | behind remote by `n` commits                                  |
+| ↓·m↑·n | branches diverged, other by `m` commits, yours by `n` commits |
 
 ### Branch States
 
-- **master|✔**               -- On a branch (master), clean
-- **:3adh57m|✔**             -- Checked out a hash
-- **dev|MERGING|✖1**         -- Doing a merge onto dev, 1 conflict
+- **master|✔** -- On a branch (master), clean
+- **:3adh57m|✔** -- Checked out a hash
+- **dev|MERGING|✖1** -- Doing a merge onto dev, 1 conflict
 - **:h2x78q0|REBASE 1/3|✖2** -- Doing a rebase, on first or 3 commits, 2 conflicts
 
 When the branch name starts with a colon `:`, it means it’s actually a hash, not a branch.
@@ -115,8 +111,8 @@ Demo:
 - You may redefine the function `git_super_status` (after the `source` statement) to adapt it to your needs (to change the order in which the information is displayed).
 
 - To modify the symbols/colors of the theme, simply redefine the variables at bottom of the
-the `zshrc.sh` after sourcing. This could be in your `~/.zshrc` or sourced elsewhere.
-These are the defaults:
+  the `zshrc.sh` after sourcing. This could be in your `~/.zshrc` or sourced elsewhere.
+  These are the defaults:
 
 ```sh
     ZSH_THEME_GIT_PROMPT_PREFIX="["
