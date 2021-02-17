@@ -138,7 +138,9 @@ void parse_stat_line(char *line, int *staged, int *conflicts, int *changed, int 
 
 int find_git_root(char *path, int len)
 {
-    char *cwd;
+    char *cwd, *p;
+    char buff[1024];
+    FILE *fp;
 
     cwd = getcwd(NULL, 0);
 
@@ -147,6 +149,32 @@ int find_git_root(char *path, int len)
 
         if (is_directory(path))
             return 1;
+
+        if (is_file(path)) {
+            if ((fp = fopen(path, "r")) == NULL) {
+                perror("fopen");
+                return 0;
+            }
+
+            if (fgets(buff, sizeof buff, fp) == NULL) {
+                perror("fgets");
+                return 0;
+            }
+
+            p = buff;
+
+            while (*p++ != ':'); /* find next to : */
+            while (*++p == ' '); /* strip spaces */
+
+            while (*p != ' ' && *p != '\n' && *p != '\r' && *p != '\0')
+                *path++ = *p++;
+
+            *path = '\0';
+
+            fclose(fp);
+
+            return 1;
+        }
 
         cwd = dirname(cwd);
     }
