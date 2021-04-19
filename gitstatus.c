@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -106,7 +107,7 @@ void parse_branch(char *line, char *head_file, char *branch, char *upstream, int
             ;
         strcpy(branch, line + i + 1);
     } else {
-        for (i = 3; line[i] != '.' && line[i] != '\0'; i++)
+        for (i = 3; (line[i] != '.' || line[i + 1] != '.') && line[i] != '\0'; i++)
             branch[i - 3] = line[i];
         branch[i - 3] = '\0';
 
