@@ -9,21 +9,31 @@ chpwd_update_git_vars() {
 update_current_git_vars() {
     unset __CURRENT_GIT_STATUS
 
-    local __GIT_CMD=$(git status --porcelain --branch &> /dev/null | $__GIT_PROMPT_DIR/gitstatus 2>/dev/null)
-    __CURRENT_GIT_STATUS=("${(@s: :)__GIT_CMD}")
+    if [ "$__GIT_PROMPT_DISABLE" != "1" ]; then
+        local __GIT_CMD=$(git status --porcelain --branch &> /dev/null | $__GIT_PROMPT_DIR/gitstatus 2>/dev/null)
+        __CURRENT_GIT_STATUS=("${(@s: :)__GIT_CMD}")
 
-    GIT_BRANCH=$__CURRENT_GIT_STATUS[1]
-    GIT_AHEAD=$__CURRENT_GIT_STATUS[2]
-    GIT_BEHIND=$__CURRENT_GIT_STATUS[3]
-    GIT_STAGED=$__CURRENT_GIT_STATUS[4]
-    GIT_CONFLICTS=$__CURRENT_GIT_STATUS[5]
-    GIT_CHANGED=$__CURRENT_GIT_STATUS[6]
-    GIT_UNTRACKED=$__CURRENT_GIT_STATUS[7]
-    GIT_STASHED=$__CURRENT_GIT_STATUS[8]
-    GIT_LOCAL_ONLY=$__CURRENT_GIT_STATUS[9]
-    GIT_UPSTREAM=$__CURRENT_GIT_STATUS[10]
-    GIT_MERGING=$__CURRENT_GIT_STATUS[11]
-    GIT_REBASE=$__CURRENT_GIT_STATUS[12]
+        GIT_BRANCH=$__CURRENT_GIT_STATUS[1]
+        GIT_AHEAD=$__CURRENT_GIT_STATUS[2]
+        GIT_BEHIND=$__CURRENT_GIT_STATUS[3]
+        GIT_STAGED=$__CURRENT_GIT_STATUS[4]
+        GIT_CONFLICTS=$__CURRENT_GIT_STATUS[5]
+        GIT_CHANGED=$__CURRENT_GIT_STATUS[6]
+        GIT_UNTRACKED=$__CURRENT_GIT_STATUS[7]
+        GIT_STASHED=$__CURRENT_GIT_STATUS[8]
+        GIT_LOCAL_ONLY=$__CURRENT_GIT_STATUS[9]
+        GIT_UPSTREAM=$__CURRENT_GIT_STATUS[10]
+        GIT_MERGING=$__CURRENT_GIT_STATUS[11]
+        GIT_REBASE=$__CURRENT_GIT_STATUS[12]
+    fi
+}
+
+gitoff() {
+    __GIT_PROMPT_DISABLE=1
+}
+
+giton() {
+    __GIT_PROMPT_DISABLE=0
 }
 
 git_super_status() {
